@@ -79,12 +79,17 @@ Do NOT add watermarks, logos, or text other than what's specified.
 
 Replace `[TITLE]`, `[SUBTITLE]`, `[VISUAL THEME description]` with actual values for this script.
 
-### Step 4 — Generate with Gemini
+### Step 4 — Load Image & Generate with Gemini
 
-Use the `gemini:edit_image` tool with:
-- `images`: the user's uploaded photo
-- `prompt`: the constructed prompt from Step 3
-- `outputPath`: `/mnt/user-data/outputs/reel-cover-[topic-slug].png`
+**Important:** The Gemini MCP server cannot access the container filesystem directly. You must use `gemini:load_image_from_path` first to convert any local file into a usable reference.
+
+1. **Load the user's photo** using `gemini:load_image_from_path` with the uploaded file path (e.g. `/mnt/user-data/uploads/photo.png`). This returns a `filePath` token and `mimeType`.
+2. **Call `gemini:edit_image`** using the returned `filePath` (not the original filesystem path):
+   - `images`: `[{ "filePath": "<filePath from load_image_from_path>", "mimeType": "<returned mimeType>" }]`
+   - `prompt`: the constructed prompt from Step 3
+   - `outputPath`: `/mnt/user-data/outputs/reel-cover-[topic-slug].png`
+
+**Do NOT** pass raw `/mnt/...` paths directly to `gemini:edit_image` or `gemini:generate_image` — they will fail. Always go through `load_image_from_path` first.
 
 ### Step 5 — Present & Offer Iteration
 
