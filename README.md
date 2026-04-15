@@ -12,17 +12,41 @@ Generate professional, branded Instagram Reel cover images (9:16) from a video s
 
 > **Note:** All conversation with you happens in **English**. Only the cover text (title/subtitle) follows the script's language.
 
-## Prerequisites
+## Installation
 
-### Set up Gemini MCP
+### Prerequisites
 
-The generation phase requires [@houtini/gemini-mcp](https://github.com/houtini/gemini-mcp) to be configured as an MCP server in Claude Code:
+The image generation step requires a **Gemini API key**. Get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+---
+
+### Claude Code
+
+#### Step 1 — Install the skill
+
+**Option A — via `claude install-skill` (recommended):**
 
 ```bash
-npm install -g @houtini/gemini-mcp
+claude install-skill github.com/ismail9k/skill-reel-cover-generator
 ```
 
-Then register it in your Claude Code MCP config — either globally in `~/.claude/settings.json` or per-project in `.mcp.json`:
+**Option B — via Skills CLI:**
+
+```bash
+npx skills add ismail9k/skill-reel-cover-generator
+```
+
+Verify it was installed:
+
+```bash
+npx skills list
+```
+
+#### Step 2 — Configure Gemini MCP
+
+The skill uses [@houtini/gemini-mcp](https://github.com/houtini/gemini-mcp) to call Gemini's image generation API.
+
+Add the following to `~/.claude/settings.json` (global) or `.mcp.json` (per-project):
 
 ```json
 {
@@ -38,55 +62,45 @@ Then register it in your Claude Code MCP config — either globally in `~/.claud
 }
 ```
 
-Restart Claude Code after saving so it picks up the new MCP server. See the [@houtini/gemini-mcp docs](https://github.com/houtini/gemini-mcp) for the full configuration reference and supported env vars.
+Restart Claude Code after saving so it picks up the new MCP server.
 
-## Installation
+---
 
-### Using `claude install-skill` (recommended)
+### Claude Desktop
 
-If you're on a recent Claude Code version, you can install the skill directly from GitHub:
+#### Step 1 — Configure Gemini MCP
 
-```bash
-claude install-skill github.com/ismail9k/claude-skill-reel-cover-generator
+1. Go to **Settings → Developer → Edit Config** to open `claude_desktop_config.json`
+2. Add the `mcpServers` block:
+
+```json
+{
+  "mcpServers": {
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "@houtini/gemini-mcp"],
+      "env": {
+        "GEMINI_API_KEY": "your-gemini-api-key"
+      }
+    }
+  }
+}
 ```
 
-### Using Skills CMD
+3. Save the file and **restart Claude Desktop**
 
-Any agent that supports the Skills CLI can install this skill:
+#### Step 2 — Install the skill
 
-```bash
-npx skills add ismail9k/claude-skill-reel-cover-generator
-```
+Claude Desktop doesn't support the Skills CLI, so install manually:
 
-Verify it was installed:
+1. Download the skill zip from this repo (or clone it locally)
+2. Go to **Customize → Skills → Create skill → Upload a skill**
 
-```bash
-npx skills list
-```
+   ![Claude Desktop step 1](img/claude-desktop-step-1.png)
 
-### Manually (no command line)
+3. Upload the zip file
 
-If you're not comfortable with the terminal, you can install the skill by copying the files into Claude's skills folder:
-
-1. **Download the skill**
-   - Go to [https://github.com/ismail9k/skill-reel-cover-generator](https://github.com/ismail9k/skill-reel-cover-generator)
-   - Click the green **Code** button → **Download ZIP**
-   - Unzip the downloaded file — you'll get a folder named `skill-reel-cover-generator`
-
-2. **Open the Claude skills folder**
-   - **macOS:** Open Finder, press `Cmd + Shift + G`, paste `~/.claude/skills` and press Enter
-   - **Windows:** Open File Explorer, paste `%USERPROFILE%\.claude\skills` in the address bar and press Enter
-   - If the `skills` folder doesn't exist yet, create it
-
-3. **Move the skill into place**
-   - Drag the unzipped `skill-reel-cover-generator` folder into the `skills` folder
-   - The final path should look like: `~/.claude/skills/skill-reel-cover-generator/SKILL.md`
-
-4. **Restart Claude**
-   - Close and reopen Claude Code (or your Claude client) so it picks up the new skill
-
-That's it — you can now use the skill by asking for a "reel cover" or running `/reel-cover-generator`.
-
+   ![Claude Desktop step 2](img/claude-desktop-step-2.png)
 
 ## Usage
 

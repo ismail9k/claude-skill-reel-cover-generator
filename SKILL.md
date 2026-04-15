@@ -142,11 +142,17 @@ Wait for the user's response.
 
 Only enter this step if the user chose to continue with Claude in Step 5.
 
-**Always ask for the photo — every run, no caching, no auto-pickup.** Prompt the user in English:
+**Always ask for the photo's absolute file path — every run, no caching, no auto-pickup, no inline uploads.** Prompt the user in English:
 
-> Great! Before I generate, I need your photo — a clear shot with a prominent face (portrait or half-body). I'll blend it naturally into the cover. Please upload it or send the full file path.
+> Great! Before I generate, I need the **absolute file path** to your photo — a clear shot with a prominent face (portrait or half-body). I'll blend it naturally into the cover.
+>
+> 💡 **Tip — copy a file's path quickly:**
+> - **macOS:** select the file in Finder, then press **Cmd + Option + C**
+> - **Windows:** select the file in Explorer, then press **Ctrl + Shift + C**
+>
+> Paste the path here and I'll take it from there.
 
-Wait for the user to provide the photo (direct upload or an explicit absolute file path) before proceeding to Step 7. If they point to a folder instead of a file, ask them to pick one specific image. If they attach an image inline without a resolvable local path, ask them for the absolute path on disk (or to save it locally first) — `gemini:generate_image` needs either a `filePath` or base64 `data` + `mimeType`. Do not proceed until all required assets are in hand.
+Wait for the user to provide an explicit absolute file path before proceeding to Step 7. Do **not** accept inline image uploads — `gemini:generate_image` needs a real `filePath` on disk. If they attach an image inline, ask them to save it locally and send the absolute path. If they point to a folder instead of a file, ask them to pick one specific image. Do not proceed until the path is in hand.
 
 ### Step 7 — Generate with Gemini
 
