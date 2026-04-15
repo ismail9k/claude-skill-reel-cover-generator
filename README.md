@@ -23,7 +23,7 @@ This skill uses **Gemini image generation** to produce the cover. Make sure the 
 Any agent that supports the Skills CLI can install this skill:
 
 ```bash
-npx skills add ismail9k/skill-reel-cover-generator
+npx skills add ismail9k/claude-skill-reel-cover-generator
 ```
 
 Verify it was installed:
