@@ -1,22 +1,63 @@
 # Reel Cover Generator — Agent Skill
 
-Generate professional, branded Instagram Reel cover images (9:16) from a video script. Designed for Arabic and English tech content creators.
+<center><img alt="Claude Desktop step 1" src="img/header.png" width="100%" /></center>
 
-**What it does:**
-- Reads your reel script, detects its language, and summarizes it
-- Suggests **3 title options** (in the script's language) — pick one or write your own
-- Suggests **3 subtitle options** — pick one, write your own, or skip it
-- Picks a matching visual theme (AI, cybersecurity, breaking news, etc.)
-- Shows you the **final image prompt** for review — copy it into another tool, or let Claude continue
-- If you continue with Claude: asks for your photo, then generates a cinematic 9:16 cover via Gemini
+Generate professional, branded Instagram Reel cover images (9:16) from a video script — powered by Claude and Gemini.
 
-> **Note:** All conversation with you happens in **English**. Only the cover text (title/subtitle) follows the script's language.
+Built for Arabic and English tech content creators who want scroll-stopping covers without opening a design tool.
+
+## Table of Contents
+
+- [Features](#features)
+- [How It Works](#how-it-works)
+- [Installation](#installation)
+  - [Claude Code](#claude-code)
+  - [Claude Desktop](#claude-desktop)
+- [Usage](#usage)
+- [Visual Themes](#visual-themes)
+- [Customization](#customization)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+- **Script-aware** — reads your reel script, detects its language (Arabic or English), and summarizes it
+- **Smart title suggestions** — generates 3 title options in the script's language; pick one or write your own
+- **Optional subtitles** — generates 3 subtitle options; pick one, write your own, or skip it entirely
+- **Theme matching** — automatically picks a visual theme (AI, cybersecurity, breaking news, etc.) based on your script's topic
+- **Prompt preview** — shows the final image prompt before generating, so you can copy it to another tool or continue with Claude
+- **Photo integration** — blends your photo naturally into a cinematic 9:16 cover via Gemini
+- **Iterative refinement** — tweak colors, titles, or visual effects and regenerate until it's perfect
+
+> **Note:** The skill talks to you in **English**. Only the cover text (title/subtitle) follows the script's language.
+
+## How It Works
+
+```
+Script  ──>  Analyze & Summarize  ──>  Pick a Title  ──>  Pick a Subtitle
+                                                                │
+         Done! <──  Refine if Needed  <──  Generate Cover  <──  Review Prompt
+```
+
+1. **Analyze** — the skill reads your script, detects the language, summarizes it, and suggests a visual theme
+2. **Title** — you get 3 title suggestions in the script's language; pick one or provide your own
+3. **Subtitle** — same for subtitles (or skip this step)
+4. **Prompt review** — the full image generation prompt is shown for your approval
+5. **Choose your path** — copy the prompt for another tool, or continue with Claude
+6. **Generate** — provide your photo, and the skill generates a cinematic 9:16 cover via Gemini
+7. **Refine** — ask for tweaks until the cover is exactly right
 
 ## Installation
 
 ### Prerequisites
 
-The image generation step requires a **Gemini API key**. Get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey).
+To have Claude generate cover images, you need to connect it to Gemini via MCP. This requires a 
+
+**Gemini API key** — get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+**Gemini MCP** - check the api here [@houtini/gemini-mcp](https://github.com/houtini/gemini-mcp) to call Gemini's image generation API.
+
+> **Don't want to set up Gemini?** The skill still works — it will generate a ready-to-use image prompt that you can copy into any other image generation tool. You just won't be able to generate the cover directly within Claude.
 
 ---
 
@@ -44,8 +85,6 @@ npx skills list
 
 #### Step 2 — Configure Gemini MCP
 
-The skill uses [@houtini/gemini-mcp](https://github.com/houtini/gemini-mcp) to call Gemini's image generation API.
-
 Add the following to `~/.claude/settings.json` (global) or `.mcp.json` (per-project):
 
 ```json
@@ -68,9 +107,22 @@ Restart Claude Code after saving so it picks up the new MCP server.
 
 ### Claude Desktop
 
-#### Step 1 — Configure Gemini MCP
+#### Step 1 — Install the skill
 
-1. Go to **Settings → Developer → Edit Config** to open `claude_desktop_config.json`
+Claude Desktop doesn't support the Skills CLI, so install manually:
+
+1. Download the skill zip from this repo (or clone it locally)
+2. Go to **Customize > Skills > Create skill > Upload a skill**
+
+<center><img alt="Claude Desktop step 1" src="img/claude-desktop-step-1.png" width="600px" /></center>
+
+3. Upload the zip file
+
+<center><img alt="Claude Desktop step 2" src="img/claude-desktop-step-2.png" width="600px" /></center>
+
+#### Step 2 — Configure Gemini MCP
+
+1. Go to **Settings > Developer > Edit Config** to open `claude_desktop_config.json`
 2. Add the `mcpServers` block:
 
 ```json
@@ -89,40 +141,37 @@ Restart Claude Code after saving so it picks up the new MCP server.
 
 3. Save the file and **restart Claude Desktop**
 
-#### Step 2 — Install the skill
-
-Claude Desktop doesn't support the Skills CLI, so install manually:
-
-1. Download the skill zip from this repo (or clone it locally)
-2. Go to **Customize → Skills → Create skill → Upload a skill**
-
-   ![Claude Desktop step 1](img/claude-desktop-step-1.png)
-
-3. Upload the zip file
-
-   ![Claude Desktop step 2](img/claude-desktop-step-2.png)
-
 ## Usage
 
-Once installed, trigger the skill by:
+Trigger the skill by:
 
 - Dropping a script and asking for a **"reel cover"**
 - Or running `/reel-cover-generator`
 
-**The skill will:**
-1. Analyze your script — detect the language, summarize it, suggest a theme
-2. Offer **3 title suggestions** — pick one or provide a custom title
-3. Offer **3 subtitle suggestions** — pick one, provide a custom one, or skip it
-4. Build the final image generation prompt and show it to you for review
-5. Let you choose: **copy the prompt** to use elsewhere, or **continue with Claude**
-6. If continuing: ask for your photo, generate the cover via Gemini, and offer refinements
+### Quick example
 
-**Language handling:** The skill talks to you in English. The cover text itself follows the script's language — Arabic scripts get Egyptian-dialect Arabic titles, English scripts get punchy English titles.
+```
+You: Here's my script about Claude's usage limits:
+     "كل يوم بستخدم Claude وفجأة بيقولي خلاص..."
+     Make me a reel cover.
+
+Skill: Analyzes > suggests 3 titles > suggests 3 subtitles > shows prompt > generates cover
+```
+
+### Language handling
+
+| Script language | Conversation | Title/Subtitle |
+|-----------------|-------------|----------------|
+| Arabic          | English     | Arabic (Egyptian dialect where natural) |
+| English         | English     | English |
+| Mixed           | English     | Follows dominant language |
 
 ## Visual Themes
 
-| Theme | When to use | Visual style |
-|-------|-------------|--------------|
+The skill picks the best theme automatically based on your script's topic. Here's the full palette:
+
+| Theme | Best for | Visual style |
+|-------|----------|--------------|
 | `ai-futuristic` | AI tools, LLMs, future tech | Dark background, glowing neon blue/purple circuits |
 | `cybersecurity` | Hacking, data leaks, privacy | Dark red/black, broken shields, code overlays |
 | `breaking-news` | Announcements, releases, shocking facts | Bold typography, red accent, high contrast |
@@ -130,6 +179,38 @@ Once installed, trigger the skill by:
 | `educational` | Explainers, how-it-works, tutorials | Clean, modern, bright with tech diagrams |
 | `opinion-hot-take` | Opinions, controversial takes | Flame/spark aesthetics, bold text, energetic |
 | `weekly-recap` | Weekly AI/tech roundups | Magazine-style layout, multiple visual elements |
+
+### Example titles by theme
+
+<details>
+<summary><strong>Arabic examples</strong></summary>
+
+| Script topic | Theme | Title | Subtitle |
+|---|---|---|---|
+| Claude usage limits | `ai-futuristic` | "Claude بيقولك لا؟ عرفت ليه" | "Usage Limits Explained" |
+| NVIDIA GTC announcement | `breaking-news` | "NVIDIA غيرت قواعد اللعبة" | "GTC 2025" |
+| OpenAI vs Gemini | `vs-comparison` | "مين أحسن؟ الحقيقة اللي محدش بيقولها" | "OpenAI vs Gemini" |
+| Cybersecurity breach | `cybersecurity` | "اتهكر بدون ما تعرف" | "تحذير أمني" |
+| Weekly AI recap | `weekly-recap` | "أهم أخبار الـAI الأسبوع ده" | "AI Weekly" |
+| How transformers work | `educational` | "الـAI بيفكر إزاي؟ الحقيقة جوا" | "Deep Dive" |
+| Controversial AI take | `opinion-hot-take` | "رأيي في الـAI هيزعلك" | "رأي صريح" |
+
+</details>
+
+<details>
+<summary><strong>English examples</strong></summary>
+
+| Script topic | Theme | Title | Subtitle |
+|---|---|---|---|
+| Claude usage limits | `ai-futuristic` | "Why Claude Said No To Me" | "Usage Limits Explained" |
+| NVIDIA GTC announcement | `breaking-news` | "NVIDIA Just Changed Everything" | "GTC 2025" |
+| OpenAI vs Gemini | `vs-comparison` | "The Truth Nobody Tells You" | "OpenAI vs Gemini" |
+| Cybersecurity breach | `cybersecurity` | "You Got Hacked and Don't Know It" | "Security Warning" |
+| Weekly AI recap | `weekly-recap` | "This Week in AI — Big Moves" | "AI Weekly" |
+| How transformers work | `educational` | "How AI Actually Thinks" | "Deep Dive" |
+| Controversial AI take | `opinion-hot-take` | "My AI Take Will Upset You" | "Hot Take" |
+
+</details>
 
 ## Customization
 
@@ -139,6 +220,15 @@ The skill is fully editable. Open `SKILL.md` to:
 - Add new themes to the theme reference table
 - Adjust the image generation prompt template
 - Modify the quality checklist
+
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request if you'd like to:
+
+- Add new visual themes
+- Improve prompt templates
+- Add support for more languages
+- Fix bugs or improve documentation
 
 ## License
 
