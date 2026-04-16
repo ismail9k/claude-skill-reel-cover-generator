@@ -89,8 +89,7 @@ Portrait Instagram Reel cover, 9:16 aspect ratio, ultra high quality.
 LAYOUT:
 - Top area: [TITLE in <language>, bold, large font, high contrast against background]
 - [SUBTITLE if any, smaller font, English or Arabic]
-- Bottom half or right side: real photo of a person integrated naturally into the scene
-- Bottom corner: small brand watermark "@ismail9k" in subtle white text
+- Lower half: the creator's face/upper body anchors the composition — large, prominent, centered or slightly offset to one side to leave room for the title
 
 VISUAL THEME: [Insert theme-specific description from Step 1 table above]
 

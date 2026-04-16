@@ -216,7 +216,6 @@ The skill picks the best theme automatically based on your script's topic. Here'
 
 The skill is fully editable. Open `SKILL.md` to:
 
-- Change the watermark handle (default: `@ismail9k`)
 - Add new themes to the theme reference table
 - Adjust the image generation prompt template
 - Modify the quality checklist
