@@ -111,7 +111,7 @@ Restart Claude Code after saving so it picks up the new MCP server.
 
 Claude Desktop doesn't support the Skills CLI, so install manually:
 
-1. Download the skill zip from **<> Code > Download ZIP**
+1. Download the skill zip from **The green "Code" button > Download ZIP**
 2. Go to **Customize > Skills > Create skill > Upload a skill**
 
 <center><img alt="Claude Desktop step 1" src="img/claude-desktop-step-1.png" width="600px" /></center>
