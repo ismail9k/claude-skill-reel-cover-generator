@@ -55,7 +55,7 @@ To have Claude generate cover images, you need to connect it to Gemini via MCP. 
 
 **Gemini API key** — get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey).
 
-**Gemini MCP** - check the api here [@houtini/gemini-mcp](https://github.com/houtini/gemini-mcp) to call Gemini's image generation API.
+**Gemini MCP** - check the api here [@houtini/gemini-mcp](https://github.com/houtini-ai/gemini-mcp) to call Gemini's image generation API.
 
 > **Don't want to set up Gemini?** The skill still works — it will generate a ready-to-use image prompt that you can copy into any other image generation tool. You just won't be able to generate the cover directly within Claude.
 
