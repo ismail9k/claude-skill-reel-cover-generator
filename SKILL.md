@@ -1,6 +1,6 @@
 ---
 name: reel-cover-generator
-description: Generate Instagram Reel cover images (9:16 portrait format) from a script. Use this skill whenever the user provides a reel/video script and wants a cover image, thumbnail, or visual for it. Also trigger when the user says "غلاف الريل", "cover للسكريبت", "thumbnail", "reel cover", or asks to generate an image for their content. The skill reads the script, extracts a title and visual theme, asks for the creator's photo, then uses Gemini to generate a polished, branded 9:16 cover image in Arabic/tech style.
+description: Generate Instagram Reel cover images (9:16 portrait format) from a script. Use this skill whenever the user provides a reel/video script and wants a cover image, thumbnail, or visual for it. Also trigger when the user says "غلاف الريل", "cover للسكريبت", "thumbnail", "reel cover", or asks to generate an image for their content. The skill reads the script, extracts a title and visual theme, asks for reference image assets, then generates a polished, branded 9:16 cover image in Arabic/tech style.
 ---
 
 # Reel Cover Generator
@@ -81,7 +81,7 @@ Wait for the user's choice. Accept:
 
 ### Step 4 — Build the Image Generation Prompt
 
-Construct a detailed Gemini image prompt using this template, filling in the dynamic parts:
+Construct a detailed image generation prompt using this template, filling in the dynamic parts:
 
 ```
 Portrait Instagram Reel cover, 9:16 aspect ratio, ultra high quality.
@@ -89,15 +89,17 @@ Portrait Instagram Reel cover, 9:16 aspect ratio, ultra high quality.
 LAYOUT:
 - Top area: [TITLE in <language>, bold, large font, high contrast against background]
 - [SUBTITLE if any, smaller font, English or Arabic]
-- Lower half: the creator's face/upper body anchors the composition — large, prominent, centered or slightly offset to one side to leave room for the title
+- Lower half: if a person image is provided, the person's face/upper body anchors the composition — large, prominent, centered or slightly offset to one side to leave room for the title
+- If a non-person base image is provided, use it as the main scene/product/context reference and build the cover around it
 
 VISUAL THEME: [Insert theme-specific description from Step 1 table above]
 
-PHOTO INTEGRATION:
-- The person's photo should appear as if they are part of the scene
-- Natural lighting blend with the background
-- Professional, confident pose
-- The person should look like a tech content creator
+REFERENCE IMAGE INTEGRATION:
+- If a person photo is provided, make the person appear naturally part of the scene
+- If a base image is provided, preserve its important details and use it to guide the cover composition
+- Include relevant extra assets such as screenshots, logos, product images, UI captures, charts, or visual references when provided
+- Natural lighting and color blend with the background
+- Do not make assets look pasted or floating
 
 TYPOGRAPHY:
 - Title: modern, bold, slightly futuristic font feel — [ALIGNMENT]
@@ -129,38 +131,69 @@ If the user skipped the subtitle in Step 3, remove the subtitle line entirely fr
 >
 > You can either:
 > 1. **Copy this prompt** and use it with another image generation agent/tool
-> 2. **Continue with me** — I'll generate the cover for you using Gemini
+> 2. **Continue with me** — I'll generate the cover for you
 >
 > Which would you like?
 
 Wait for the user's response.
 - If they choose option 1 (copy / use elsewhere) → acknowledge and stop. Do not call any generation tool.
-- If they choose option 2 (continue with Claude) → proceed to Step 6.
+- If they choose option 2 (continue here) → proceed to Step 6.
 
 ### Step 6 — Request Required Assets
 
-Only enter this step if the user chose to continue with Claude in Step 5.
+Only enter this step if the user chose to continue here in Step 5.
 
-**Always ask for the photo's absolute file path — every run, no caching, no auto-pickup, no inline uploads.** Prompt the user in English:
+Ask for at least one reference image. The user can provide either a person image or another base image. Extra assets are optional but recommended.
 
-> Great! Before I generate, I need the **absolute file path** to your photo — a clear shot with a prominent face (portrait or half-body). I'll blend it naturally into the cover.
+**If working in Codex:** the user can paste, copy, upload, or attach the image directly in the chat. They can also provide absolute file paths if that is easier.
+
+**If working in Claude with Gemini MCP:** ask for absolute file paths to the reference assets — every run, no caching, no auto-pickup, no inline uploads. `gemini:generate_image` needs real `filePath` values on disk.
+
+Prompt the user in English, adapting the first line to the current environment:
+
+Codex:
+
+> Great! Before I generate, send at least one reference image. You can paste or attach it directly here, or send an absolute file path if you prefer:
+>
+> - **Person image:** a clear portrait or half-body photo if you want a person in the cover
+> - **Base image:** a screenshot, product image, app UI, or scene you want the cover to build around
+>
+> You can also add extra assets, like logos, screenshots, device mockups, charts, or UI captures. The more relevant assets you provide, the better I can include them in the cover and produce a stronger result.
+
+Claude/Gemini:
+
+> Great! Before I generate, send the **absolute file path** to at least one reference image:
+>
+> - **Person image:** a clear portrait or half-body photo if you want a person in the cover
+> - **Base image:** a screenshot, product image, app UI, or scene you want the cover to build around
+>
+> You can also send extra asset paths, like logos, screenshots, device mockups, charts, or UI captures. The more relevant assets you provide, the better I can include them in the cover and produce a stronger result.
 >
 > 💡 **Tip — copy a file's path quickly:**
 > - **macOS:** select the file in Finder, then press **Cmd + Option + C**
 > - **Windows:** select the file in Explorer, then press **Ctrl + Shift + C**
 >
-> Paste the path here and I'll take it from there.
+> Paste the path or paths here and I'll take it from there.
 
-Wait for the user to provide an explicit absolute file path before proceeding to Step 7. Do **not** accept inline image uploads — `gemini:generate_image` needs a real `filePath` on disk. If they attach an image inline, ask them to save it locally and send the absolute path. If they point to a folder instead of a file, ask them to pick one specific image. Do not proceed until the path is in hand.
+Wait for the user to provide at least one reference image before proceeding to Step 7.
 
-### Step 7 — Generate with Gemini
+- In Codex, accept pasted/copied/uploaded/attached images directly, or accept absolute file paths.
+- In Claude/Gemini, do **not** accept inline image uploads for generation. If they attach an image inline, ask them to save it locally and send the absolute path. If they point to a folder instead of a file, ask them to pick specific images. Do not proceed until at least one path is in hand.
 
-**Use `gemini:generate_image`, NOT `gemini:edit_image`.** This is critical:
+### Step 7 — Generate the Cover
+
+#### Codex
+
+Use Codex's image generation/editing capability with the final prompt and the user-provided reference image assets. If the user pasted or attached images directly, use those images as references; do not ask for file paths again.
+
+#### Claude/Gemini
+
+Use `gemini:generate_image`, NOT `gemini:edit_image`. This is critical:
 
 - `generate_image` supports `aspectRatio: "9:16"` — required for Reels.
-- `edit_image` has **no** `aspectRatio` parameter; its output ratio follows the input photo, which breaks the 9:16 requirement when the user uploads a square or landscape selfie.
+- `edit_image` has **no** `aspectRatio` parameter; its output ratio follows the input reference image, which breaks the 9:16 requirement when the user uploads a square or landscape asset.
 
-The creator's photo goes in as a **reference image** to guide the generation, while the prompt + aspect ratio fully control composition.
+The person photo, base image, and any extra assets go in as **reference images** to guide the generation, while the prompt + aspect ratio fully control composition.
 
 #### Call
 
@@ -168,20 +201,23 @@ The creator's photo goes in as a **reference image** to guide the generation, wh
 gemini:generate_image
   prompt:       <constructed prompt from Step 4>
   aspectRatio:  "9:16"
-  images:       [{ "filePath": "<real absolute path to the creator's photo>" }]
+  images:       [{ "filePath": "<real absolute path to reference image>" }, { "filePath": "<optional extra asset path>" }]
   outputPath:   "<real absolute path>/reel-cover-<topic-slug>.png"   # optional
 ```
 
 Notes on the `images` parameter:
 - The schema accepts `filePath` directly — the server reads the file itself, bypassing the MCP transport limit. You do **not** need to base64-encode or call `load_image_from_path` first.
 - `mimeType` is auto-detected from `filePath`, so you can omit it.
-- If the photo path is very large or transient, base64 `data` + `mimeType` also works but is subject to MCP transport size limits.
+- If an asset path is very large or transient, base64 `data` + `mimeType` also works but is subject to MCP transport size limits.
 
 If `outputPath` is omitted the server saves to its configured `GEMINI_IMAGE_OUTPUT_DIR` (or its built-in default) with an auto-generated name — providing an explicit path keeps the file findable.
 
 #### Iteration / refinement turns
 
-When the user asks for tweaks ("make the title red", "different background"), call `generate_image` again with an updated prompt and the **same reference photo**. Do not switch to `edit_image` for refinements — the 9:16 ratio must be preserved.
+When the user asks for tweaks ("make the title red", "different background"), regenerate with an updated prompt and the **same reference image assets** unless the user provides replacements.
+
+- In Codex, use the same pasted/attached images or file-path references from the previous generation.
+- In Claude/Gemini, call `gemini:generate_image` again. Do not switch to `edit_image` for refinements — the 9:16 ratio must be preserved.
 
 ### Step 8 — Present & Offer Iteration
 
@@ -190,7 +226,7 @@ After generating:
 2. Display the final title, subtitle, and theme used
 3. Offer refinements **in English**:
 
-> How's the cover? If you want to tweak anything — colors, title, visual effect, photo placement — just say the word and I'll regenerate.
+> How's the cover? If you want to tweak anything — colors, title, visual effect, person placement, or asset placement — just say the word and I'll regenerate.
 
 ---
 
@@ -199,7 +235,7 @@ After generating:
 Before presenting the final image:
 - [ ] Title is short, punchy, and matches script topic
 - [ ] Theme matches the script's mood
-- [ ] Photo is naturally integrated (not pasted/floating)
+- [ ] Person image, base image, and extra assets are naturally integrated where provided
 - [ ] 9:16 portrait ratio
 - [ ] Text is legible at small sizes
 
