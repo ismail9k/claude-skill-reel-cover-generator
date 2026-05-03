@@ -2,7 +2,7 @@
 
 <center><img alt="Claude Desktop step 1" src="img/header.png" width="100%" /></center>
 
-Generate professional, branded Instagram Reel cover images (9:16) from a video script — powered by Claude and Gemini.
+Generate professional, branded Instagram Reel cover images (9:16) from a video script — powered by Codex or Claude.
 
 Built for Arabic and English tech content creators who want scroll-stopping covers without opening a design tool.
 
@@ -11,6 +11,7 @@ Built for Arabic and English tech content creators who want scroll-stopping cove
 - [Features](#features)
 - [How It Works](#how-it-works)
 - [Installation](#installation)
+  - [Codex](#codex)
   - [Claude Code](#claude-code)
   - [Claude Desktop](#claude-desktop)
 - [Usage](#usage)
@@ -25,8 +26,9 @@ Built for Arabic and English tech content creators who want scroll-stopping cove
 - **Smart title suggestions** — generates 3 title options in the script's language; pick one or write your own
 - **Optional subtitles** — generates 3 subtitle options; pick one, write your own, or skip it entirely
 - **Theme matching** — automatically picks a visual theme (AI, cybersecurity, breaking news, etc.) based on your script's topic
-- **Prompt preview** — shows the final image prompt before generating, so you can copy it to another tool or continue with Claude
-- **Photo integration** — blends your photo naturally into a cinematic 9:16 cover via Gemini
+- **Prompt preview** — shows the final image prompt before generating, so you can copy it to another tool or continue in your agent
+- **Reference image support** — blend a person's photo into the cover, or provide another base image to guide the scene
+- **Extra asset support** — add screenshots, logos, product images, UI captures, or other assets so the cover can include them and produce stronger results
 - **Iterative refinement** — tweak colors, titles, or visual effects and regenerate until it's perfect
 
 > **Note:** The skill talks to you in **English**. Only the cover text (title/subtitle) follows the script's language.
@@ -34,48 +36,104 @@ Built for Arabic and English tech content creators who want scroll-stopping cove
 ## How It Works
 
 ```
-Script  ──>  Analyze & Summarize  ──>  Pick a Title  ──>  Pick a Subtitle
-                                                                │
-         Done! <──  Refine if Needed  <──  Generate Cover  <──  Review Prompt
+┌────────────┐
+│  Script    │
+└─────┬──────┘
+      │
+      ▼
+┌──────────────────────┐
+│ Analyze & Summarize  │  Detect language, extract the hook,
+└─────┬────────────────┘  and pick the best visual theme
+      │
+      ▼
+┌──────────────────────┐
+│ Choose Title         │  Pick from 3 options or write your own
+└─────┬────────────────┘
+      │
+      ▼
+┌──────────────────────┐
+│ Choose Subtitle      │  Pick one, customize it, or skip it
+└─────┬────────────────┘
+      │
+      ▼
+┌──────────────────────┐
+│ Review Prompt        │  Approve the final generation prompt
+└─────┬────────────────┘
+      │
+      ▼
+┌──────────────────────┐
+│ Generate Cover       │  Add a person photo, base image, or extra assets
+└─────┬────────────────┘
+      │
+      ▼
+┌──────────────────────┐
+│ Refine if Needed     │  Tweak text, colors, composition, or effects
+└─────┬────────────────┘
+      │
+      ▼
+┌────────────┐
+│   Done!    │
+└────────────┘
 ```
 
 1. **Analyze** — the skill reads your script, detects the language, summarizes it, and suggests a visual theme
 2. **Title** — you get 3 title suggestions in the script's language; pick one or provide your own
 3. **Subtitle** — same for subtitles (or skip this step)
 4. **Prompt review** — the full image generation prompt is shown for your approval
-5. **Choose your path** — copy the prompt for another tool, or continue with Claude
-6. **Generate** — provide your photo, and the skill generates a cinematic 9:16 cover via Gemini
+5. **Choose your path** — copy the prompt for another tool, or continue in your agent
+6. **Generate** — provide a person's image, another base/reference image, and any extra assets; the skill generates a cinematic 9:16 cover
 7. **Refine** — ask for tweaks until the cover is exactly right
 
 ## Installation
 
-### Prerequisites
+### Codex
 
-To have Claude generate cover images, you need to connect it to Gemini via MCP. This requires a 
+Codex has built-in image generation, so you do **not** need Gemini MCP to generate covers.
 
-**Gemini API key** — get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey).
+Codex installs skills into `$CODEX_HOME/skills` (defaults to `~/.codex/skills`).
 
-**Gemini MCP** - check the api here [@houtini/gemini-mcp](https://github.com/houtini-ai/gemini-mcp) to call Gemini's image generation API.
+**Option A — via Skills CLI (recommended):**
 
-> **Don't want to set up Gemini?** The skill still works — it will generate a ready-to-use image prompt that you can copy into any other image generation tool. You just won't be able to generate the cover directly within Claude.
+```bash
+npx skills add ismail9k/skill-reel-cover-generator
+```
+
+**Option B — via Codex install-skill skill:**
+
+```bash
+/install-skill github.com/ismail9k/skill-reel-cover-generator
+```
+
+Restart Codex after installing so it picks up the new skill.
 
 ---
 
 ### Claude Code
 
+Claude needs Gemini MCP for direct image generation.
+
+#### Prerequisites
+
+**Gemini API key** — get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+**Gemini MCP** — see [@houtini/gemini-mcp](https://github.com/houtini-ai/gemini-mcp) to call Gemini's image generation API.
+
+> **Don't want to set up Gemini?** The skill still works — it will generate a ready-to-use image prompt that you can copy into any other image generation tool. You just won't be able to generate the cover directly within Claude.
+
 #### Step 1 — Install the skill
 
-**Option A — via `claude install-skill` (recommended):**
+**Option A — via Skills CLI (recommended):**
+
+```bash
+npx skills add ismail9k/skill-reel-cover-generator
+```
+
+**Option B — via `claude install-skill`**
 
 ```bash
 claude install-skill github.com/ismail9k/skill-reel-cover-generator
 ```
 
-**Option B — via Skills CLI:**
-
-```bash
-npx skills add ismail9k/skill-reel-cover-generator
-```
 
 Verify it was installed:
 
@@ -106,6 +164,14 @@ Restart Claude Code after saving so it picks up the new MCP server.
 ---
 
 ### Claude Desktop
+
+Claude Desktop also needs Gemini MCP for direct image generation.
+
+#### Prerequisites
+
+**Gemini API key** — get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+**Gemini MCP** — see [@houtini/gemini-mcp](https://github.com/houtini-ai/gemini-mcp) to call Gemini's image generation API.
 
 #### Step 1 — Install the skill
 
@@ -157,6 +223,16 @@ You: Here's my script about Claude's usage limits:
 
 Skill: Analyzes > suggests 3 titles > suggests 3 subtitles > shows prompt > generates cover
 ```
+
+### Asset tips
+
+For best results, provide at least one clear reference image:
+
+- **Person image** — a portrait or half-body photo if you want yourself or another person in the cover
+- **Base image** — a screenshot, product image, app UI, or scene you want the cover to build around
+- **Extra assets** — logos, screenshots, device mockups, icons, charts, or visual references
+
+The more relevant assets you provide, the better the model can include the real visual details in the cover instead of inventing them.
 
 ### Language handling
 
